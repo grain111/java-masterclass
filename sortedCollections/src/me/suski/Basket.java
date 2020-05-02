@@ -1,0 +1,62 @@
+package me.suski;
+
+import java.awt.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
+
+public class Basket {
+
+    private final String name;
+    private final Map<StockItem, Integer> list;
+
+    public Basket(String name) {
+        this.name = name;
+        this.list = new TreeMap<>();
+    }
+
+    public void clear() {
+        list.clear();
+    }
+
+    public int addToBasket(StockItem item, int quantity) {
+        if (item != null && quantity > 0) {
+            int inBasket = list.getOrDefault(item, 0);
+            list.put(item, inBasket + quantity);
+            return inBasket;
+        }
+        return 0;
+    }
+
+    public int removeFromBasket(StockItem item, int quantity) {
+        if (item != null && quantity > 0) {
+            int newAmount = list.getOrDefault(item, 0) - quantity;
+            if (newAmount >= 0) {
+                list.put(item, newAmount);
+                if (newAmount == 0) {
+                    list.remove(item);
+                }
+                return quantity;
+            }
+        }
+        return 0;
+
+    }
+    public Map<StockItem, Integer> items() {
+        return Collections.unmodifiableMap(list);
+    }
+
+    @Override
+    public String toString() {
+        String s = "\nShopping basket " + name + " contains " + list.size() +
+                (list.size() == 1 ? " item" : " items") + "\n";
+        double totalCost = 0d;
+        for (Map.Entry<StockItem, Integer> item : list.entrySet()) {
+            s += item.getKey() + ", " + item.getValue() + " purchased\n";
+            totalCost += item.getKey().getPrice() * item.getValue();
+
+        }
+        return s + "Total cost: " + totalCost;
+    }
+}
